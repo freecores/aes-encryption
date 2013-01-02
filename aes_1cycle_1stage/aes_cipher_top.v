@@ -45,7 +45,7 @@
 
 `timescale 1 ns/1 ps
 
-module aes_cipher_top(clk, rst, ld, done, key, text_in, text_out,aes_en);
+module aes_cipher_top(clk, rst, ld, done, key, text_in, text_out);
 
 input		clk, rst;
 input		ld;
@@ -54,7 +54,6 @@ input	[127:0]	key;
 input	[127:0]	text_in;
 output	[127:0]	text_out;
 
-input aes_en;
 
 reg	[127:0]	text_in_r;
 reg	[127:0]	text_out;
@@ -301,7 +300,7 @@ reg 		done2;
 
 always @(posedge clk)
 begin
-	if(rst)	begin dcnt <=  4'h0;	 end
+	if(~rst)	begin dcnt <=  4'h0;	 end
 	else
 	if(ld)	begin	dcnt <=  4'h2;	 end
 	else
@@ -1053,7 +1052,6 @@ assign sa33_sr_round10 = sa32_sub_round10;		//
 
 
 always @(posedge clk)
- if(aes_en && ~rst) 
  begin 
 		/*  $strobe($time,": round_key2 is %h\n",{w4,w5,w6,w7});
 		  $strobe($time,": roundkeyeven = %h, text_out_even is %h\n",{w4,w5,w6,w7},text_out);*/
@@ -1074,77 +1072,8 @@ always @(posedge clk)
 		  text_out[039:032] <=  sa32_sr_round10 ^ w42[07:00];	 
 		  text_out[007:000] <=  sa33_sr_round10 ^ w43[07:00];
 	end
-	
-	else
-			text_out <= 128'hx;
 
 
-always @(posedge clk)
-	begin
-/*	$strobe($time,": text_out_temp is %h\n",text_out_temp);
-
-
-*/	/*
-	$strobe($time,": subbytes is %h\n",{sa00_sub, sa01_sub, sa02_sub, sa03_sub,
-													 sa10_sub, sa11_sub, sa12_sub, sa13_sub,
-													 sa20_sub, sa21_sub, sa22_sub, sa23_sub,
-													 sa30_sub, sa31_sub, sa32_sub, sa33_sub});
-													 
-	$strobe($time,": shiftrows is %h\n",{sa00_sr, sa01_sr, sa02_sr, sa03_sr,
-													  sa10_sr, sa11_sr, sa12_sr, sa13_sr,
-													  sa20_sr, sa21_sr, sa22_sr, sa23_sr,
-													  sa30_sr, sa31_sr, sa32_sr, sa33_sr});
-													  
-	$strobe($time,": mixcolumn is %h\n",{sa00_mc, sa01_mc, sa02_mc, sa03_mc,
-													  sa10_mc, sa11_mc, sa12_mc, sa13_mc,
-													  sa20_mc, sa21_mc, sa22_mc, sa23_mc,
-													  sa30_mc, sa31_mc, sa32_mc, sa33_mc});
-	
-	$strobe($time,": sa_next_into_even is %h\n",{sa00_next_round2, sa01_next_round2, sa02_next_round2, sa03_next_round2,
-																 sa10_next_round2, sa11_next_round2, sa12_next_round2, sa13_next_round2,
-																 sa20_next_round2, sa21_next_round2, sa22_next_round2, sa23_next_round2,
-																 sa30_next_round2, sa31_next_round2, sa32_next_round2, sa33_next_round2});
-																 
-	$strobe($time,": subbytes_e is %h\n",{sa00_sub_round2, sa01_sub_round2, sa02_sub_round2, sa03_sub_round2,
-													 sa10_sub_round2, sa11_sub_round2, sa12_sub_round2, sa13_sub_round2,
-													 sa20_sub_round2, sa21_sub_round2, sa22_sub_round2, sa23_sub_round2,
-													 sa30_sub_round2, sa31_sub_round2, sa32_sub_round2, sa33_sub_round2});
-													 
-	$strobe($time,": shiftrows_e is %h\n",{sa00_sr_round2, sa01_sr_round2, sa02_sr_round2, sa03_sr_round2,
-													  sa10_sr_round2, sa11_sr_round2, sa12_sr_round2, sa13_sr_round2,
-													  sa20_sr_round2, sa21_sr_round2, sa22_sr_round2, sa23_sr_round2,
-													  sa30_sr_round2, sa31_sr_round2, sa32_sr_round2, sa33_sr_round2});
-													  
-	$strobe($time,": mixcolumn_e is %h\n",{sa00_mc_round2, sa01_mc_round2, sa02_mc_round2, sa03_mc_round2,
-													  sa10_mc_round2, sa11_mc_round2, sa12_mc_round2, sa13_mc_round2,
-													  sa20_mc_round2, sa21_mc_round2, sa22_mc_round2, sa23_mc_round2,
-													  sa30_mc_round2, sa31_mc_round2, sa32_mc_round2, sa33_mc_round2});																
-	*/															 
-	end
-	
-	
-/*
-always @(posedge clk)
-       begin
-				if(done)
-						begin
-							text_out_64 <= text_out[127:64];
-//							done2 <= 1;
-						end
-				else if(~done)
-							text_out_64 <= text_out[63:0];
-		end
-	*/	 
-		 
-/*
-always @(posedge clk)
-			 begin
-				if(done2)
-					begin
-						text_out_64 <= text_out[63:0];
-					end	
-		 end
-*/		 
 ////////////////////////////////////////////////////////////////////
 //
 // Generic Functions

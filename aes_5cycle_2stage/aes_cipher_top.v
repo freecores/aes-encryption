@@ -45,7 +45,7 @@
 
 `timescale 1 ns/1 ps
 
-module aes_cipher_top(clk, rst, ld, done, key, text_in, text_out,aes_en);
+module aes_cipher_top(clk, rst, ld, done, key, text_in, text_out);
 
 input		clk, rst;
 input		ld;
@@ -54,7 +54,7 @@ input	[127:0]	key;
 input	[127:0]	text_in;
 output	[127:0]	text_out;
 
-input aes_en;
+
 ////////////////////////////////////////////////////////////////////
 //
 // Local Wires
@@ -127,9 +127,8 @@ reg 		done2;
 //
 
 always @(posedge clk)
-if(aes_en)
 begin
-	if(rst)	begin dcnt <=  4'h0;	 end
+	if(~rst)	begin dcnt <=  4'h0;	 end
 	else
 	if(ld)	begin	dcnt <=  4'h6;	 end
 	else
@@ -284,14 +283,13 @@ assign sa33_next_round2 = sa33_mc ^ w7[07:00];
 
 
 always @(posedge clk)
- if(aes_en && ~rst) 
 begin 
 	  
 	 /* $strobe($time,": roundkeyodd = %h, text_out_odd is %h\n",{w0,w1,w2,w3},text_out_temp);
 	  $strobe($time,": roundkeyeven is %h\n",{w4,w5,w6,w7}); 	*/
 	  text_out_temp[127:120] <=  sa00_sr ^ w4[31:24];	 
 	  text_out_temp[095:088] <=  sa01_sr ^ w5[31:24];	 
-     text_out_temp[063:056] <=  sa02_sr ^ w6[31:24];	 
+          text_out_temp[063:056] <=  sa02_sr ^ w6[31:24];	 
 	  text_out_temp[031:024] <=  sa03_sr ^ w7[31:24];	 
 	  text_out_temp[119:112] <=  sa10_sr ^ w4[23:16];	 
 	  text_out_temp[087:080] <=  sa11_sr ^ w5[23:16];	 
@@ -366,7 +364,6 @@ assign {sa03_mc_round2, sa13_mc_round2, sa23_mc_round2, sa33_mc_round2}  = mix_c
 
 
 always @(posedge clk)
- if(aes_en && ~rst) 
  begin 
 		/*  $strobe($time,": round_key2 is %h\n",{w4,w5,w6,w7});
 		  $strobe($time,": roundkeyeven = %h, text_out_even is %h\n",{w4,w5,w6,w7},text_out);*/
@@ -389,12 +386,13 @@ always @(posedge clk)
 	end
 
 
+/* -----\/----- EXCLUDED -----\/-----
 always @(posedge clk)
 	begin
-/*	$strobe($time,": text_out_temp is %h\n",text_out_temp);
+/-*	$strobe($time,": text_out_temp is %h\n",text_out_temp);
 
 
-*/	/*
+*-/	/-*
 	$strobe($time,": subbytes is %h\n",{sa00_sub, sa01_sub, sa02_sub, sa03_sub,
 													 sa10_sub, sa11_sub, sa12_sub, sa13_sub,
 													 sa20_sub, sa21_sub, sa22_sub, sa23_sub,
@@ -429,11 +427,11 @@ always @(posedge clk)
 													  sa10_mc_round2, sa11_mc_round2, sa12_mc_round2, sa13_mc_round2,
 													  sa20_mc_round2, sa21_mc_round2, sa22_mc_round2, sa23_mc_round2,
 													  sa30_mc_round2, sa31_mc_round2, sa32_mc_round2, sa33_mc_round2});																
-	*/															 
+	*-/															 
 	end
 	
 	
-/*
+/-*
 always @(posedge clk)
        begin
 				if(done)
@@ -444,9 +442,9 @@ always @(posedge clk)
 				else if(~done)
 							text_out_64 <= text_out[63:0];
 		end
-	*/	 
+	*-/	 
 		 
-/*
+/-*
 always @(posedge clk)
 			 begin
 				if(done2)
@@ -454,7 +452,8 @@ always @(posedge clk)
 						text_out_64 <= text_out[63:0];
 					end	
 		 end
-*/		 
+*-/		 
+ -----/\----- EXCLUDED -----/\----- */
 ////////////////////////////////////////////////////////////////////
 //
 // Generic Functions
